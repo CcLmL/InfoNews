@@ -1,11 +1,11 @@
 from flask import Flask
-from flask_migrate import Migrate, MigrateCommand
-from flask_script import Manager
+from flask_migrate import Migrate
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis
 
 from Config import config_dict
+# from Info.modules.home import home_blu  注意循环导入的问题！！！
 
 db = None
 sr = None
@@ -28,12 +28,12 @@ def create_app(config_type):
     sr = StrictRedis(host=config_class.REDIS_HOST, port=config_class.REDIS_PORT)
     # 初始化Session存储对象
     Session(app)
-    # 创建管理器
-    mgr = Manager(app)
-    # 初始化迁移命令
-    Migrate(app, db)
-    # 添加迁移命令
-    mgr.add_command("mc", MigrateCommand)
+    # 初始化迁移器(这里有点不熟悉，注意！！！)
+    Migrate(app,db)
+
+    # 3.注册蓝图
+    from Info.modules.home import home_blu
+    app.register_blueprint(home_blu)
 
     return app
 
