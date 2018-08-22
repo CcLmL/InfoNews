@@ -1,5 +1,5 @@
 from flask import Blueprint
-
+# 一个页面对应一个包
 
 # 1.创建蓝图对象（使视图函数能够全局使用）
 home_blu = Blueprint("home", __name__)

@@ -1,10 +1,5 @@
-from flask_migrate import Migrate, MigrateCommand, Config
+from flask_migrate import MigrateCommand
 from flask_script import Manager
-from flask import Flask
-from flask_session import Session
-from flask_sqlalchemy import SQLAlchemy
-from redis import StrictRedis
-
 from Info import create_app
 
 # 创建应用
