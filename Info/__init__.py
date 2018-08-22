@@ -51,5 +51,13 @@ def create_app(config_type):
     from Info.modules.home import home_blu
     app.register_blueprint(home_blu)
 
+    # 配置日志文件
+    setup_log()
+
+    # 让模型文件和主程序建立关系
+    # from info.models import *  # import * 语法不能在局部作用域中使用
+    # 可以使用 import Info.models
+    from Info import models
+
     return app
 
