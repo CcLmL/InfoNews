@@ -57,7 +57,7 @@ def create_app(config_type):
     # 让模型文件和主程序建立关系
     # from info.models import *  # import * 语法不能在局部作用域中使用
     # 可以使用 import Info.models
-    from Info import models
+    from Info import models  # 因为这里之前我没有建立关系所以导致我数据迁移生成版本的时候出现了错误
 
     return app
 
