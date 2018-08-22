@@ -1,5 +1,7 @@
 from datetime import timedelta
 
+from flask_migrate import Migrate, MigrateCommand
+from flask_script import Manager
 from flask import Flask
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
@@ -28,6 +30,12 @@ db = SQLAlchemy(app)
 sr = StrictRedis(host=Config.REDIS_HOST, port=Config.REDIS_PORT)
 # 初始化Session存储对象
 Session(app)
+# 创建管理器
+mgr = Manager(app)
+# 初始化迁移命令
+Migrate(app,db)
+# 添加迁移命令
+mgr.add_command("mc",MigrateCommand)
 
 
 @app.route('/')
@@ -36,4 +44,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    mgr.run()
