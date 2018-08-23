@@ -51,6 +51,8 @@ def create_app(config_type):
     from Info.modules.home import home_blu
     app.register_blueprint(home_blu)
 
+    from Info.modules.passport import passport_blu
+    app.register_blueprint(passport_blu)
     # 配置日志文件
     setup_log()
 
