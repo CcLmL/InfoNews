@@ -41,7 +41,7 @@ def create_app(config_type):
     #  创建数据库连接对象
     db = SQLAlchemy(app)
     # 创建redis连接对象，用于存储session
-    sr = StrictRedis(host=config_class.REDIS_HOST, port=config_class.REDIS_PORT)
+    sr = StrictRedis(host=config_class.REDIS_HOST, port=config_class.REDIS_PORT, decode_responses=True)  # 这里要进行解码配置，因为从redis库里取出的数据是bytes类型的
     # 初始化Session存储对象
     Session(app)
     # 初始化迁移器(这里有点不熟悉，注意！！！)

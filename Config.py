@@ -5,7 +5,7 @@ from redis import StrictRedis
 
 class Config(object):
     DEBUG = True  # 开启调试模式
-    SQLALCHEMY_DATABASE_URI = "mysql://root:mysql@127.0.0.1:3306/flask01"  # mysql的连接地址
+    SQLALCHEMY_DATABASE_URI = "mysql://root:mysql@127.0.0.1:3306/info16"  # mysql的连接地址
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # 决定是否追踪数据库变化
     REDIS_HOST = "127.0.0.1"  # redis的ip
     REDIS_PORT = 6379  # redis的端口
