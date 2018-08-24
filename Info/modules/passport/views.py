@@ -118,11 +118,11 @@ def register():
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR,errmsg=error_map[RET.DATAERR])
-    # 校验图片验证码
+    # 校验短信验证码
     if not real_sms_code:  # 校验是否过期
         return jsonify(errno=RET.PARAMERR, errmsg=error_map[RET.PARAMERR])
 
-    if sms_code != real_sms_code:  # 校验是否已过期
+    if sms_code != real_sms_code:  # 校验输入短信验证码是否正确
         return jsonify(errno=RET.PARAMERR, errmsg=error_map[RET.PARAMERR])
 
     # 将用户数据保存到数据库

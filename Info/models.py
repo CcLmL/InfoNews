@@ -81,7 +81,7 @@ class User(BaseModel, db.Model):
         }
         return resp_dict
 
-    @property
+    @property  # 将类的方法转为属性
     def password(self):
         raise AttributeError("该属性是计算性属性，不能直接取值")
 
