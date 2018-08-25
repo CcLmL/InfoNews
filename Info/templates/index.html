@@ -14,12 +14,16 @@
     <div class="header">
         <a href="#" class="logo fl"><img src="../static/news/images/logo.png" alt="logo"></a>
         <ul class="menu fl">
-            <li class="active" data-cid="1"><a href="javascript:;">最新</a></li>
-            <li data-cid="2"><a href="javascript:;">股市</a></li>
-            <li data-cid="3"><a href="javascript:;">债市</a></li>
-            <li data-cid="4"><a href="javascript:;">商品</a></li>
-            <li data-cid="5"><a href="javascript:;">外汇</a></li>
-            <li data-cid="6"><a href="javascript:;">公司</a></li>
+            {% for category in categories %}
+                <li {% if loop.index == 1 %}{# 初始界面总是定在最新 #}class="active"{% endif %} data-cid="{{ category.id }}"><a href="javascript:;">{{ category.name }}</a></li>
+            {% endfor %}  {# （在index.js中）在前端中当点击哪个类别哪个类别就会添加"class='active'，对应其他都会被remove" #}
+
+{#            <li class="active" data-cid="1"><a href="javascript:;">最新</a></li>#}
+{#            <li data-cid="2"><a href="javascript:;">股市</a></li>#}
+{#            <li data-cid="3"><a href="javascript:;">债市</a></li>#}
+{#            <li data-cid="4"><a href="javascript:;">商品</a></li>#}
+{#            <li data-cid="5"><a href="javascript:;">外汇</a></li>#}
+{#            <li data-cid="6"><a href="javascript:;">公司</a></li>#}
         </ul>
 
         {% if user %} {# 如果user存在即用户密码正确登陆成功，此时后端渲染将用户信息展示 #}
