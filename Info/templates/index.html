@@ -22,15 +22,17 @@
             <li data-cid="6"><a href="javascript:;">公司</a></li>
         </ul>
 
-        <div class="user_btns fr">
-            <a href="javascript:;" class="login_btn">登录</a> / <a href="javascript:;" class="register_btn">注册</a>
-        </div>
-        <!-- TODO 用户登录后显示下面，隐藏上面 -->
-<!--             <div class="user_login fr">
-            <img src="../images/person01.png" class="lgin_pic">
-            <a href="#" id="nick_name">用户张三</a>
-            <a href="javascript:;" onclick="logout()">退出</a>
-        </div> -->
+        {% if user %} {# 如果user存在即用户密码正确登陆成功，此时后端渲染将用户信息展示 #}
+            <div class="user_login fr">
+                <img {% if user.avatar_url %} src="{{ user.avatar_url }}" {% else %}src="../static/news/images/person01.png" {% endif %} class="lgin_pic">  {# 判断用户是否设置头像，否则使用默认头像 #}
+                <a href="#" id="nick_name">{{ user.nick_name }}</a>
+                <a href="javascript:;" onclick="logout()">退出</a>
+            </div>
+        {% else %}  {# 否则渲染为未登录状态 #}
+            <div class="user_btns fr">
+                <a href="javascript:;" class="login_btn">登录</a> / <a href="javascript:;" class="register_btn">注册</a>
+            </div>
+        {% endif %}
     </div>
 </div>
 
