@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 
 from redis import StrictRedis
@@ -18,10 +19,12 @@ class Config(object):
 
 class DevelopConfig(Config):  # 定义开发环境的配置
     DEBUG = True
+    LOGLEVEL = logging.DEBUG
 
 
 class ProductConfig(Config):  # 定义生产环境的配置
     DEBUG = False
+    LOGLEVEL = logging.ERROR
 
 
 # 设置配置字典
