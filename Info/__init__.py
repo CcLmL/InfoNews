@@ -8,6 +8,7 @@ from redis import StrictRedis
 
 from Config import config_dict
 # from Info.modules.home import home_blu  注意循环导入的问题！！！
+from Info.common import index_convert
 
 db = None
 sr = None
@@ -60,6 +61,9 @@ def create_app(config_type):
     # from info.models import *  # import * 语法不能在局部作用域中使用
     # 可以使用 import Info.models
     from Info import models  # 因为这里之前我没有建立关系所以导致我数据迁移生成版本的时候出现了错误
+
+    # 添加自定义的过滤器
+    app.add_template_filter(index_convert, "index_convert")
 
     return app
 

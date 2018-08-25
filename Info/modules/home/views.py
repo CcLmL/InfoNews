@@ -1,6 +1,7 @@
 from flask import current_app, render_template, session
 
-from Info.models import User
+from Info.constants import CLICK_RANK_MAX_NEWS
+from Info.models import User, News
 from Info.modules.home import home_blu
 
 
@@ -16,10 +17,19 @@ def index():
             user = User.query.get(user_id)
         except Exception as e:
             current_app.logger.error(e)
-
+    # 将用户登陆信息传到模板中
     user = user.to_dict() if user else None  # 三元运算，将user模型中的数据进行字典中的封装（如果user存在进行to_dict()操作，否则user为none）
-    # 将用户登陆信息传到模板
-    return render_template("index.html", user=user)  # 不能直接对其中的user=user.todict()，因为user可能为none，这样会报错
+
+    # 查询新闻 按照点击量的倒序排列 取前10条
+    rank_list = []
+    try:
+        rank_list = News.query.order_by(News.clicks.desc()).limit(CLICK_RANK_MAX_NEWS).all()
+    except Exception as e:
+        current_app.logger.error(e)
+
+    rank_list = [news.to_basic_dict() for news in rank_list]
+
+    return render_template("index.html", user=user, rank_list=rank_list)  # 不能直接对其中的user=user.todict()，因为user可能为none，这样会报错
 
 
 # 设置图标（浏览器只会请求一次，不管是否请求到之后都不会请求了）
