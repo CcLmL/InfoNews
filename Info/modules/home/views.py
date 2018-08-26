@@ -39,7 +39,7 @@ def index():
     except Exception as e:
         current_app.logger.error(e)
 
-    return render_template("index.html", user=user, rank_list=rank_list, categories=categories)  # 不能直接对其中的user=user.todict()，因为user可能为none，这样会报错
+    return render_template("news/index.html", user=user, rank_list=rank_list, categories=categories)  # 不能直接对其中的user=user.todict()，因为user可能为none，这样会报错
 
 
 # 设置图标（浏览器只会请求一次，不管是否请求到之后都不会请求了）

@@ -2,33 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>首页-新经资讯</title>
-    <link rel="stylesheet" type="text/css" href="../static/news/css/reset.css">
-    <link rel="stylesheet" type="text/css" href="../static/news/css/main.css">
-    <script type="text/javascript" src="../static/news/js/jquery-1.12.4.min.js"></script>
-    <script type="text/javascript" src="../static/news/js/main.js"></script>
-    <script type="text/javascript" src="../static/news/js/index.js"></script>
+    {% block title_block %}
+
+    {% endblock %}
+    <link rel="stylesheet" type="text/css" href="../../static/news/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="../../static/news/css/main.css">
+    <script type="text/javascript" src="../../static/news/js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="../../static/news/js/main.js"></script>
+    {% block script_block %}
+
+    {% endblock %}
 </head>
 <body>
 <div class="header_con">
     <div class="header">
-        <a href="#" class="logo fl"><img src="../static/news/images/logo.png" alt="logo"></a>
-        <ul class="menu fl">
-            {% for category in categories %}
-                <li {% if loop.index == 1 %}{# 初始界面总是定在最新 #}class="active"{% endif %} data-cid="{{ category.id }}"><a href="javascript:;">{{ category.name }}</a></li>
-            {% endfor %}  {# （在index.js中）在前端中当点击哪个类别哪个类别就会添加"class='active'，对应其他都会被remove" #}
+        <a href="#" class="logo fl"><img src="../../static/news/images/logo.png" alt="logo"></a>
+        {% block category_block %}
 
-{#            <li class="active" data-cid="1"><a href="javascript:;">最新</a></li>#}
-{#            <li data-cid="2"><a href="javascript:;">股市</a></li>#}
-{#            <li data-cid="3"><a href="javascript:;">债市</a></li>#}
-{#            <li data-cid="4"><a href="javascript:;">商品</a></li>#}
-{#            <li data-cid="5"><a href="javascript:;">外汇</a></li>#}
-{#            <li data-cid="6"><a href="javascript:;">公司</a></li>#}
-        </ul>
+        {% endblock %}
 
         {% if user %} {# 如果user存在即用户密码正确登陆成功，此时后端渲染将用户信息展示 #}
             <div class="user_login fr">
-                <img {% if user.avatar_url %} src="{{ user.avatar_url }}" {% else %}src="../static/news/images/person01.png" {% endif %} class="lgin_pic">  {# 判断用户是否设置头像，否则使用默认头像 #}
+                <img {% if user.avatar_url %} src="{{ user.avatar_url }}" {% else %}src="../../static/news/images/person01.png" {% endif %} class="lgin_pic">  {# 判断用户是否设置头像，否则使用默认头像 #}
                 <a href="#" id="nick_name">{{ user.nick_name }}</a>
                 <a href="javascript:;" onclick="logout()">退出</a>
             </div>
@@ -41,17 +36,21 @@
 </div>
 
 <div class="conter_con">
-    <ul class="list_con fl">
-    </ul>
+    {% block content_block %}
+
+    {% endblock %}
     <div class="rank_con fr">
+        {% block author_block %}
+
+        {% endblock %}
         <div class="rank_title">
             <h3>点击排行</h3>
         </div>
         <ul class="rank_list">
             {% for news in rank_list %}
-                <li><span class="{{ loop.index | index_convert }}{# index_convert是自定义的过滤器，本质是函数 #}">{{ loop.index }}</span><a href="/news/{{ news.title }}">{{ news.title }}</a></li>
+                <li><span class="{{ loop.index | index_convert }}"{# index_convert是自定义的过滤器，本质是函数 #}>{{ loop.index }}</span><a
+                        href="/news/{{ news.id }}">{{ news.title }}</a></li>
             {% endfor %}
-
 {#            <li><span class="first">1</span><a href="/news/1">势如破竹！人民币再度连闯四道关口 在岸、离岸双双升破6.42</a></li>#}
 {#            <li><span class="second">2</span><a href="/news/1">凛冬已至，还有多少银行人在假装干银行</a></li>#}
 {#            <li><span class="third">3</span><a href="/news/1">人民日报：部分城市楼市放松限制引关注，楼市调控不会“拉抽屉”</a></li>#}
@@ -61,6 +60,7 @@
         </ul>
     </div>
 </div>
+
 <div class="footer">
     <div class="footer_links">
         <a href="">关于我们</a>
@@ -115,7 +115,7 @@
         <div class="form_group">
             <input type="text" name="code_pwd" id="imagecode" class="code_pwd">
             <div class="input_tip">图形验证码</div>
-            <img src="../static/news/images/pic_code.png" class="get_pic_code" onclick="generateImageCode()">
+            <img src="../../static/news/images/pic_code.png" class="get_pic_code" onclick="generateImageCode()">
             <div id="register-image-code-err" class="error_tip">图形码不能为空</div>
         </div>
         <div class="form_group">
