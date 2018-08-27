@@ -98,9 +98,10 @@ def get_sms_code():
     return jsonify(errno=RET.OK, errmsg=error_map[RET.OK])
 
 
+# 用户注册
 @passport_blu.route('/register', methods=["POST"])
 def register():
-    # 获取参数  request.json可以获取到application/json格式传过来的json数据
+    # 获取参数
     mobile = request.json.get("mobile")
     password = request.json.get("password")
     sms_code = request.json.get("sms_code")
@@ -108,29 +109,28 @@ def register():
     if not all([mobile, password, sms_code]):
         return jsonify(errno=RET.PARAMERR, errmsg=error_map[RET.PARAMERR])
 
-    # 校验手机格式
+    # 校验手机号
     if not re.match(r'1[35678]\d{9}', mobile):
-        return jsonify(errno=RET.PARAMERR,errmsg=error_map[RET.PARAMERR])
+        return jsonify(errno=RET.PARAMERR, errmsg=error_map[RET.PARAMERR])
 
-    # 根据手机号取出短信验证码文字
+    # 根据手机号取出短信验证码
     try:
         real_sms_code = sr.get("sms_code_id_" + mobile)
     except Exception as e:
         current_app.logger.error(e)
-        return jsonify(errno=RET.DBERR,errmsg=error_map[RET.DATAERR])
-    # 校验短信验证码
+        return jsonify(errno=RET.DBERR, errmsg=error_map[RET.DBERR])
+    # 校验验证码
     if not real_sms_code:  # 校验是否过期
+        return jsonify(errno=RET.PARAMERR, errmsg="验证码已过期")
+
+    if sms_code != real_sms_code:  # 校验验证码是否正确
         return jsonify(errno=RET.PARAMERR, errmsg=error_map[RET.PARAMERR])
 
-    if sms_code != real_sms_code:  # 校验输入短信验证码是否正确
-        return jsonify(errno=RET.PARAMERR, errmsg=error_map[RET.PARAMERR])
-
-    # 将用户数据保存到数据库
+    # 将用户数据保存到数据库中
     user = User()
     user.mobile = mobile
-    # 使用计算性属性password对密码加密过程进行封装
+    # 使用计算机属性password对密码加密过程进行封装
     user.password = password
-    # print(user.password)  # 在property装饰器中封装了，只要获取这个值时就会抛出一个错误
     user.nick_name = mobile
     # 记录用户最后登陆的时间
     user.last_login = datetime.now()
@@ -143,7 +143,7 @@ def register():
         db.session.rollback()
         return jsonify(errno=RET.DBERR, errmsg=error_map[RET.DBERR])
 
-    # 状态保持  免密码登陆
+    # 状态保持 免密码登陆
     session["user_id"] = user.id
 
     return jsonify(errno=RET.OK, errmsg=error_map[RET.OK])
