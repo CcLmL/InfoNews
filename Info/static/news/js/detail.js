@@ -102,7 +102,7 @@ $(function() {
                     comment_html += '<div class="user_name fl">' + comment.user.nick_name + '</div>'
                     comment_html += '<div class="comment_text fl">'
                     comment_html += comment.content
-                    comment_html += '</div>'
+                    comment_html += '</div>';
                     comment_html += '<div class="comment_time fl">' + comment.create_time + '</div>'
 
                     comment_html += '<a href="javascript:;" class="comment_up fr" data-commentid="' + comment.id + '" data-newsid="' + comment.news_id + '" data-likecount="0">赞</a>'
