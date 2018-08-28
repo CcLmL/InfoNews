@@ -64,7 +64,7 @@
                         </div>
                     {% endif %}
                     <div class="comment_time fl">{{ comment.create_time }}</div>
-                    <a href="javascript:;" class="comment_up fr {% if comment.is_like %}has_comment_up{% endif %}" data-commentid="{{ comment.id }}" data-newsid="{{ comment.news_id }}" data-likecount="{{ comment.like_count }}">{% if comment.like_count %}{{ comment.like_count }}{% else %}赞{% endif %}</a>
+                    <a href="javascript:;" class="comment_up fr {% if comment.is_like %}has_comment_up{% endif %}" data-commentid="{{ comment.id }}" data-newsid="1"{# 点赞只是评论和用户有关系,与哪篇新闻没有关系,新闻与评论有关联 #} data-likecount="{{ comment.like_count }}">{% if comment.like_count %}{{ comment.like_count }}{% else %}赞{% endif %}</a>
                     <a href="javascript:;" class="comment_reply fr">回复</a>
                     <!-- TODO 回复评论 注意替换评论id和新闻id -->
                     <from class="reply_form fl" data-commentid="{{ comment.id }}" data-newsid="{{ news.id }}">
