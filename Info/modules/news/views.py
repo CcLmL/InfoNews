@@ -44,7 +44,9 @@ def news_detail(news_id):
             is_collected = True
 
     # 查询该新闻的所有评论,传到模板中
-    comments = Comment.query.filter(Comment.news_id == news.id).order_by(Comment.create_time.desc()).all()
+    # comments = Comment.query.filter(Comment.news_id == news.id).order_by(Comment.create_time.desc()).all()
+    comments = news.comments.order_by(Comment.create_time.desc()).all()  # 也可以使用这种方法来查询出所有数据(因为new.comments也是一个BaseQuery对象,可以通过all()取出值)
+
     # 查询当前用户是否对某条评论点过赞
     comments_list = []
     for comment in comments:
