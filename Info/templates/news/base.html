@@ -16,7 +16,7 @@
 <body>
 <div class="header_con">
     <div class="header">
-        <a href="#" class="logo fl"><img src="../../static/news/images/logo.png" alt="logo"></a>
+        <a href="/" class="logo fl"><img src="../../static/news/images/logo.png" alt="logo"></a>
         {% block category_block %}
 
         {% endblock %}
@@ -24,7 +24,7 @@
         {% if user %} {# 如果user存在即用户密码正确登陆成功，此时后端渲染将用户信息展示 #}
             <div class="user_login fr">
                 <img {% if user.avatar_url %} src="{{ user.avatar_url }}" {% else %}src="../../static/news/images/person01.png" {% endif %} class="lgin_pic">  {# 判断用户是否设置头像，否则使用默认头像 #}
-                <a href="#" id="nick_name">{{ user.nick_name }}</a>
+                <a href="{{ url_for("user.user_info") }}" id="nick_name">{{ user.nick_name }}</a>
                 <a href="javascript:;" onclick="logout()">退出</a>
             </div>
         {% else %}  {# 否则渲染为未登录状态 #}
@@ -39,26 +39,23 @@
     {% block content_block %}
 
     {% endblock %}
-    <div class="rank_con fr">
-        {% block author_block %}
+    {% block rank_block %}
+        <div class="rank_con fr">
+            {% block author_block %}
 
-        {% endblock %}
-        <div class="rank_title">
-            <h3>点击排行</h3>
+            {% endblock %}
+            <div class="rank_title">
+                <h3>点击排行</h3>
+            </div>
+            <ul class="rank_list">
+                {% for news in rank_list %}
+                    <li><span class="{{ loop.index | index_convert }}"
+                            {# index_convert是自定义的过滤器，本质是函数 #}>{{ loop.index }}</span><a
+                            href="/news/{{ news.id }}">{{ news.title }}</a></li>
+                {% endfor %}
+            </ul>
         </div>
-        <ul class="rank_list">
-            {% for news in rank_list %}
-                <li><span class="{{ loop.index | index_convert }}"{# index_convert是自定义的过滤器，本质是函数 #}>{{ loop.index }}</span><a
-                        href="/news/{{ news.id }}">{{ news.title }}</a></li>
-            {% endfor %}
-{#            <li><span class="first">1</span><a href="/news/1">势如破竹！人民币再度连闯四道关口 在岸、离岸双双升破6.42</a></li>#}
-{#            <li><span class="second">2</span><a href="/news/1">凛冬已至，还有多少银行人在假装干银行</a></li>#}
-{#            <li><span class="third">3</span><a href="/news/1">人民日报：部分城市楼市放松限制引关注，楼市调控不会“拉抽屉”</a></li>#}
-{#            <li><span>4</span><a href="/news/1">势如破竹！人民币再度连闯四道关口 在岸、离岸双双升破6.42</a></li>#}
-{#            <li><span>5</span><a href="/news/1">凛冬已至，还有多少银行人在假装干银行</a></li>#}
-{#            <li><span>6</span><a href="/news/1">人民日报：部分城市楼市放松限制引关注，楼市调控不会“拉抽屉”</a></li>#}
-        </ul>
-    </div>
+    {% endblock %}
 </div>
 
 <div class="footer">

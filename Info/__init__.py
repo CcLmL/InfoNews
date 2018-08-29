@@ -57,6 +57,8 @@ def create_app(config_type):
     from Info.modules.news import news_blu
     app.register_blueprint(news_blu)
 
+    from Info.modules.user import user_blu
+    app.register_blueprint(user_blu)
     # 配置日志文件
     setup_log(config_class.LOGLEVEL)
 
