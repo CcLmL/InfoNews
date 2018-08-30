@@ -15,6 +15,7 @@ def index_convert(index):
     return index_dict.get(index, "")
 
 
+
 # 查询用户登陆状态
 def user_login_data(f):
     @functools.wraps(f)  # 可以让闭包函数wrapper使用指定函数f的函数信息（如函数名__name__,文档注释__doc__）
