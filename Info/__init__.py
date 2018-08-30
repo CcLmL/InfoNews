@@ -1,6 +1,6 @@
 from logging.handlers import RotatingFileHandler
 import logging
-from flask import Flask
+from flask import Flask, g, render_template
 from flask_migrate import Migrate
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
@@ -70,6 +70,17 @@ def create_app(config_type):
     # 添加自定义的过滤器
     from Info.common import index_convert  # 哪用放哪
     app.add_template_filter(index_convert, "index_convert")
+
+    from Info.common import user_login_data  # 还是上面的问题
+
+    # 监听404错误
+    @app.errorhandler(404)
+    @user_login_data
+    def page_not_found(e):  # 这个参数是发生错误的信息,必须要的参数
+        user = g.user
+        user = user.to_dict() if user else None
+        # 渲染404页面
+        return render_template("news/404.html", user=user)
 
     return app
 
