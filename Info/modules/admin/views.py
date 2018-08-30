@@ -1,5 +1,6 @@
-from flask import request, render_template, current_app, redirect, url_for, session
+from flask import request, render_template, current_app, redirect, url_for, session, g
 
+from Info.common import user_login_data
 from Info.models import User
 from Info.modules.admin import admin_blu
 
@@ -46,9 +47,11 @@ def login():
 
 
 # 后台首页
-@admin_blu.route('/index')
+@admin_blu.route('/index')  # 不仅后台首页,包括其中的各种网页都应该以以登陆后的状态进行访问,所以进入网站前应该先进行判断
+@user_login_data
 def index():
-    return render_template("admin/index.html")
+    user = g.user
+    return render_template("admin/index.html", user=user.to_dict())
 
 
 # 后台退出
