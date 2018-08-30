@@ -1,6 +1,8 @@
 from flask import g, redirect, render_template, abort, request, jsonify, current_app
 
 from Info.common import user_login_data
+from Info.constants import USER_COLLECTION_MAX_NEWS
+from Info.models import tb_user_collection
 from Info.modules.user import user_blu
 
 
@@ -107,3 +109,39 @@ def pass_info():
     user.password = new_password
 
     return jsonify(errno=RET.OK, errmsg=error_map[RET.OK])
+
+
+# 显示我的收藏
+@user_blu.route('/collection')
+@user_login_data
+def collection():
+    user = g.user
+    if not user:
+        return abort(404)
+
+    page = request.args.get("p", 1)
+
+    try:
+        page = int(page)
+    except Exception as e:
+        current_app.logger.error(e)
+        page = 1
+
+    # 将当前用户的所有收藏传到模板中
+    news_list = []
+    total_page = 1
+    try:
+        pn = user.collection_news.order_by(tb_user_collection.c.create_time.desc()).paginate(page, USER_COLLECTION_MAX_NEWS)
+        news_list = pn.items
+        cur_page = page
+        total_page = pn.pages
+    except Exception as e:
+        current_app.logger.error(e)
+
+    data = {
+        "news_list": [news.to_dict() for news in news_list],
+        "cur_page": page,
+        "total_page": total_page
+    }
+
+    return render_template("news/user_collection.html", data=data)
