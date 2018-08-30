@@ -2,7 +2,7 @@ from flask import g, redirect, render_template, abort, request, jsonify, current
 
 from Info.common import user_login_data
 from Info.constants import USER_COLLECTION_MAX_NEWS
-from Info.models import tb_user_collection
+from Info.models import tb_user_collection, Category
 from Info.modules.user import user_blu
 
 
@@ -130,6 +130,7 @@ def collection():
     # 将当前用户的所有收藏传到模板中
     news_list = []
     total_page = 1
+
     try:
         pn = user.collection_news.order_by(tb_user_collection.c.create_time.desc()).paginate(page, USER_COLLECTION_MAX_NEWS)
         news_list = pn.items
@@ -145,3 +146,27 @@ def collection():
     }
 
     return render_template("news/user_collection.html", data=data)
+
+
+# 显示新闻发布页/提交发布
+@user_blu.route('/news_release', methods=['GET', 'POST'])
+@user_login_data
+def news_release():
+    user = g.user
+    if not user:
+        return abort(404)
+
+    if request.method == 'GET':
+        # 查询所有分类,传到模板zhong
+        categories = []
+        try:
+            categories = Category.query.all()
+        except Exception as e:
+            current_app.logger.error(e)
+
+        if len(categories):  # 因为数据库中的0值是最新,并不是分类
+            categories.pop(0)
+
+        return render_template("news/user_news_release.html", categories=categories)
+
+    # POST处理
