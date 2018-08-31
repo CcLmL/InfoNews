@@ -5,7 +5,7 @@ from flask import request, render_template, current_app, redirect, url_for, sess
 
 from Info.common import user_login_data
 from Info.constants import USER_COLLECTION_MAX_NEWS
-from Info.models import User
+from Info.models import User, News
 from Info.modules.admin import admin_blu
 
 
@@ -161,3 +161,38 @@ def user_list():
     }
 
     return render_template("admin/user_list.html", data=data)
+
+
+# 显示新闻待审核列表
+@admin_blu.route('/news_review')
+def news_review():
+    page = request.args.get("p", 1)
+    keyword = request.args.get("keywords")
+
+    try:
+        page = int(page)
+    except Exception as e:
+        current_app.logger.error(e)
+        page = 1
+
+    # 将所有用户发布的新闻传到模板中
+    news_list = []
+    total_page = 1
+    filter_list = [News.user_id != None]
+    if keyword:
+        filter_list.append(News.title.contains(keyword))
+
+    try:
+        pn = News.query.filter(*filter_list).order_by(News.create_time.desc()).paginate(page, USER_COLLECTION_MAX_NEWS)
+        news_list = pn.items
+        total_page = pn.pages
+    except Exception as e:
+        current_app.logger.error(e)
+
+    data = {
+        "news_list":[news.to_dict() for news in news_list],
+        "cur_page": page,
+        "total_page": total_page
+    }
+
+    return render_template("admin/news_review.html", data=data)
