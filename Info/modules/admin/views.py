@@ -5,7 +5,7 @@ from flask import request, render_template, current_app, redirect, url_for, sess
 
 from Info.common import user_login_data
 from Info.constants import USER_COLLECTION_MAX_NEWS
-from Info.models import User, News
+from Info.models import User, News, Category
 from Info.modules.admin import admin_blu
 
 
@@ -262,7 +262,7 @@ def news_review_action():
 @admin_blu.route('/news_edit')
 def news_edit():
     page = request.args.get("p", 1)
-    keyword = request.args.get("keyword")
+    keywords = request.args.get("keywords")
 
     try:
         page = int(page)
@@ -274,8 +274,8 @@ def news_edit():
     news_list = []
     total_page = 1
     filter_list = [News.status == 0]
-    if keyword:
-        filter_list.append(News.title.contains(keyword))
+    if keywords:
+        filter_list.append(News.title.contains(keywords))
 
     try:
         pn = News.query.filter(*filter_list).paginate(page, USER_COLLECTION_MAX_NEWS)
@@ -291,3 +291,44 @@ def news_edit():
     }
 
     return render_template("admin/news_edit.html", data=data)
+
+
+# 显示版式编辑详情
+@admin_blu.route('/news_edit_detail')
+def news_edit_detail():
+    # 获取参数
+    news_id = request.args.get("news_id")
+    # 校验参数
+    try:
+        news_id = int(news_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return abort(404)
+    # 查询新闻模型
+    try:
+        news = News.query.get(news_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return abort(404)
+
+    # 将所有的类别传到模板
+    categories = []
+    try:
+        categories = Category.query.all()
+    except Exception as e:
+        current_app.logger.error(e)
+        return abort(404)
+    # 标记新闻对应的类别
+    categories_list = []
+    for category in categories:
+        is_selected = False
+        category_dict = category.to_dict()
+        if category.id == news.category_id:
+            is_selected = True
+        category_dict["is_selected"] = is_selected
+        categories_list.append(category_dict)
+
+    if len(categories_list):
+        categories_list.pop(0)
+    # 将模型数据传到模板中
+    return render_template("admin/news_edit_detail.html", news=news.to_dict(), categories_list=categories_list)
