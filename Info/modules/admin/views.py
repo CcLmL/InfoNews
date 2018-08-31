@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from flask import request, render_template, current_app, redirect, url_for, session, g
 
 from Info.common import user_login_data
+from Info.constants import USER_COLLECTION_MAX_NEWS
 from Info.models import User
 from Info.modules.admin import admin_blu
 
@@ -129,4 +130,34 @@ def user_count():
         "active_count": active_count
     }
 
-    return  render_template("admin/user_count.html", data=data)
+    return render_template("admin/user_count.html", data=data)
+
+
+# 显示用户列表
+@admin_blu.route('/user_list')
+def user_list():
+    page = request.args.get("p", 1)
+
+    try:
+        page = int(page)
+    except Exception as e:
+        current_app.logger.error(e)
+        page = 1
+
+    # 将当前用户的所有收藏传到模板中
+    user_list = []
+    total_page = 1
+    try:
+        pn = User.query.filter(User.is_admin == False).paginate(page, USER_COLLECTION_MAX_NEWS)
+        user_list = pn.items
+        total_page = pn.pages
+    except Exception as e:
+        current_app.logger.error(e)
+
+    data = {
+        "user_list": user_list,
+        "cur_page": page,
+        "total_page": total_page
+    }
+
+    return render_template("admin/user_list.html", data=data)
