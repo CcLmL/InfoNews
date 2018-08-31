@@ -1,3 +1,6 @@
+import time
+from datetime import datetime, timedelta
+
 from flask import request, render_template, current_app, redirect, url_for, session, g
 
 from Info.common import user_login_data
@@ -64,3 +67,66 @@ def logout():
     # 将结果返回
     return redirect(url_for("admin.login"))
 
+
+# 用户统计
+@admin_blu.route('/user_count')
+def user_count():
+    # 用户总数
+    total_count = 0
+    try:
+        total_count = User.query.filter(User.is_admin == False).count()
+    except Exception as e:
+        current_app.logger.error(e)
+
+    # 月新增人数
+    mon_count = 0
+    # 获取本地日期
+    t = time.localtime()
+    # 先构建日期字符串
+    date_mon_str = "%d-%02d-01" % (t.tm_year, t.tm_mon)
+    # 日期字符串可以转为日期对象
+    date_mon = datetime.strptime(date_mon_str, "%Y-%m-%d")
+    try:
+        mon_count = User.query.filter(User.is_admin == False, User.create_time >= date_mon).count()
+    except Exception as e:
+        current_app.logger.error(e)
+
+    # 日新增人数
+    day_count = 0
+    # 先构建日期字符串
+    date_day_str = "%d-%02d-%2d" %(t.tm_year, t.tm_mon, t.tm_mday)
+    # 日期字符串可以转为日期对象
+    date_day = datetime.strptime(date_day_str, "%Y-%m-%d")
+    try:
+        day_count = User.query.filter(User.is_admin == False, User.create_time >= date_day).count()
+    except Exception as e:
+        current_app.logger.error(e)
+
+    # 获取日活跃人数(每日的登录人数)
+    active_count = []
+    active_time = []
+    try:
+        for i in range(30):
+            begin_date = date_day - timedelta(days=i)
+            end_date = date_day + timedelta(days=1-i)
+            # 查询登录时间 >= 某日0点, < 次日0点
+            one_day_count = User.query.filter(User.is_admin == False, User.last_login >= begin_date, User.last_login < end_date).count()
+            active_count.append(one_day_count)
+            # 将日期对象转为日期字符串
+            one_day_str = begin_date.strftime("%Y-%m-%d")
+            active_time.append(one_day_str)
+    except Exception as e:
+        current_app.logger.error(e)
+
+    active_time.reverse()
+    active_count.reverse()
+
+    data = {
+        "total_count": total_count,
+        "mon_count": mon_count,
+        "day_count": day_count,
+        "active_time": active_time,
+        "active_count": active_count
+    }
+
+    return  render_template("admin/user_count.html", data=data)
