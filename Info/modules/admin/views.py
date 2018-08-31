@@ -257,3 +257,37 @@ def news_review_action():
     # 返回json
     return jsonify(errno=RET.OK, errmsg=error_map[RET.OK])
     
+    
+# 显示新闻版式列表
+@admin_blu.route('/news_edit')
+def news_edit():
+    page = request.args.get("p", 1)
+    keyword = request.args.get("keyword")
+
+    try:
+        page = int(page)
+    except Exception as e:
+        current_app.logger.error(e)
+        page = 1
+
+    # 将所有的审核通过的新闻传到模板中
+    news_list = []
+    total_page = 1
+    filter_list = [News.status == 0]
+    if keyword:
+        filter_list.append(News.title.contains(keyword))
+
+    try:
+        pn = News.query.filter(*filter_list).paginate(page, USER_COLLECTION_MAX_NEWS)
+        news_list = pn.items
+        total_page = pn.pages
+    except Exception as e:
+        current_app.logger.error(e)
+
+    data = {
+        "news_list": [news.to_review_dict() for news in news_list],
+        "cur_page": page,
+        "total_page": total_page
+    }
+
+    return render_template("admin/news_edit.html", data=data)
